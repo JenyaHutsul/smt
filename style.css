@@ -1,0 +1,25 @@
+body{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+
+}
+
+.field{
+    width: 600px;
+    height: 600px;
+    display: flex;
+    flex-wrap: wrap;
+    background-color: black;
+}
+
+.cell{
+    box-sizing: border-box;
+    background-color: black;
+    width: 10%;
+    height: 10%;
+}
+
+.red{
+    background-color: red;
+}
