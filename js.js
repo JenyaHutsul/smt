@@ -1,26 +1,3 @@
-document.body.appendChild(createLayout());
-
-const getDataButton = document.querySelector(".get-data");
-const spanCount = document.querySelector(".counter");
-const ol = document.querySelector("ol");
-
-
-getDataButton.addEventListener("click", handler);
-
-
-function createLi(res){
-    ol.textContent = "";
-    ol.setAttribute("start", (Number(spanCount.textContent) * 20 - 19));
-    res.results.forEach(el => {
-        const li = document.createElement("li");
-        li.classList.add("li-item");
-        li.textContent = el.name;
-        ol.appendChild(li);
-    });
-}
-
-
-
 class Field{
     #element
     arr = [];
@@ -31,7 +8,7 @@ class Field{
     }
     
     createCells(){
-        for(let i = 0; i < 100; i++){
+        for(let i = 1; i < 101; i++){
             this.arr.push(new Cell(i).render());
         }
     }
@@ -67,67 +44,96 @@ class Cell{
 }
 
 class Snake{
-    constructor(){
+    constructor(head){
         this.x = 6;
-        this.y = 6;
         this.speedX = 1;
         this.speedY = 10;
+        this.dir = "";
+        this.snake = [this.x]; 
+        this.maxLength = 5;
     }
 
     #moveUp(){
-        if(this.y > 0) this.x -= this.speedY;
+        if(this.x > 10) {
+            this.dir = "up";
+            this.x -= this.speedY
+        };
     }
 
     #moveDown(){
-        if(this.y <= 90) this.x += this.speedY;
+        if(this.x <= 90) {
+            this.dir = "down"
+            this.x += this.speedY;
+        }
     }
 
     #moveRight(){
-        if(this.x > 0) this.x += this.speedX;
+        if(this.x%10 != 0) {
+            this.dir = "Right";
+            this.x += this.speedX;
+        }
     }
 
     #moveLeft(){
-        if(this.x <= 90) this.x -= this.speedX;
+        if(this.x%10 != 1) {
+            this.x -= this.speedX;
+            this.dir = "Left";
+        }
+    }
+
+    #moveSnake(arr,x){
+        arr.unshift(x);
+        const oldHead = document.querySelector(`.cell[data-id='${arr[arr.length-1]}']`);
+        if(this.maxLength < arr.length){
+            oldHead.classList.remove("red");
+            arr.pop();
+        }
+        const newHead = document.querySelector(`.cell[data-id='${arr[0]}']`);
+        newHead.classList.add("red");
     }
 
     move(direction){
-        if(direction === "up") this.#moveUp();
-        if(direction === "down") this.#moveDown();
-        if(direction === "left") this.#moveLeft();
-        if(direction === "right") this.#moveRight();
+        if(direction === "up") {
+            this.#moveUp()
+            this.#moveSnake(this.snake,this.x);
+        };
+        if(direction === "down") {
+            this.#moveDown();
+            this.#moveSnake(this.snake,this.x);
+        }
+        if(direction === "left") {
+            this.#moveLeft();
+            this.#moveSnake(this.snake,this.x);
+        }
+        if(direction === "right") {
+            this.#moveRight();
+            this.#moveSnake(this.snake,this.x);
+        }
     }
+
+
+
+
+
 }
 
 function game(){
     const snake = new Snake();
-
     let head = document.querySelector(`.cell[data-id='${snake.x}']`);
 
     head.classList.add("red");
     document.addEventListener("keydown", (e)=>{
         if(e.keyCode === 38){
             snake.move("up");
-            head.classList.remove("red")
-            head = document.querySelector(`.cell[data-id='${snake.x}']`);
-            head.classList.add("red")
         }
         if(e.keyCode === 39){
             snake.move("right");
-            head.classList.remove("red")
-            head = document.querySelector(`.cell[data-id='${snake.x}']`);
-            head.classList.add("red")
         }
         if(e.keyCode === 40){
             snake.move("down");
-            head.classList.remove("red")
-            head = document.querySelector(`.cell[data-id='${snake.x}']`);
-            head.classList.add("red")
         }
         if(e.keyCode === 37){
             snake.move("left");
-            head.classList.remove("red")
-            head = document.querySelector(`.cell[data-id='${snake.x}']`);
-            head.classList.add("red")
         }
     })
 }
